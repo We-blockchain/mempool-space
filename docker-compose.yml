@@ -43,7 +43,7 @@ services:
       CORE_RPC_USERNAME: "mempool"
       CORE_RPC_PASSWORD: "mempool"
       DATABASE_ENABLED: 1
-      DATABASE_HOST: "mempool-db"
+      DATABASE_HOST: "172.17.0.1"
       DATABASE_DATABASE: "mempool"
       DATABASE_USERNAME: "mempool"
       DATABASE_PASSWORD: "mempool"
@@ -62,6 +62,8 @@ services:
       MYSQL_PASSWORD: "mempool"
       MYSQL_ROOT_PASSWORD: "admin"
     image: mariadb:10.5.21
+    ports:
+      - 3306:3306
     networks:
       - polar-network-1_default
 
