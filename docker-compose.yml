@@ -1,20 +1,5 @@
 version: "3.7"
 services:
-  electrs:
-    hostname: electrs
-    image: getumbrel/electrs:v0.10.2
-    environment:
-      ELECTRS_ELECTRUM_RPC_ADDR: "electrs:50001"
-      ELECTRS_DAEMON_RPC_ADDR: "polar-n1-backend1:18443"
-      ELECTRS_DAEMON_P2P_ADDR: "polar-n1-backend1:18444"
-    entrypoint: "sh -c 'sleep 15 && electrs'"
-    ports:
-      - 50001:50001
-    volumes:
-      - ./data/:/data/.electrs/
-    networks:
-      - polar-network-1_default
-
   mempool-web:
     restart: on-failure
     depends_on:
@@ -31,33 +16,19 @@ services:
   mempool-api:
     depends_on:
       - mempool-db
-      - electrs
     environment:
-      MEMPOOL_BACKEND: "electrum"
+      MEMPOOL_BACKEND: "none"
       MEMPOOL_NETWORK: "testnet"
-      ELECTRUM_HOST: "electrs"
-      ELECTRUM_PORT: "50001"
-      ELECTRUM_TLS_ENABLED: false
-      CORE_RPC_HOST: "polar-n1-backend1"
+      CORE_RPC_HOST: "172.17.0.1"
       CORE_RPC_PORT: "18443"
-      CORE_RPC_USERNAME: "polaruser"
-      CORE_RPC_PASSWORD: "polarpass"
-      DATABASE_ENABLED: true
+      CORE_RPC_USERNAME: "mempool"
+      CORE_RPC_PASSWORD: "mempool"
+      DATABASE_ENABLED: 1
       DATABASE_HOST: "mempool-db"
       DATABASE_DATABASE: "mempool"
       DATABASE_USERNAME: "mempool"
       DATABASE_PASSWORD: "mempool"
-      STATISTICS_ENABLED: true
-      LIGHTNING_ENABLED: true
-      LIGHTNING_BACKEND: "lnd"
-      LIGHTNING_TOPOLOGY_FOLDER: ""
-      LIGHTNING_STATS_REFRESH_INTERVAL: 600
-      LIGHTNING_GRAPH_REFRESH_INTERVAL: 600
-      LIGHTNING_LOGGER_UPDATE_INTERVAL: 30
-      LND_TLS_CERT_PATH: "/lnd/alice/tls.cert"
-      LND_MACAROON_PATH: "/lnd/alice/data/chain/bitcoin/regtest/admin.macaroon"
-      LND_REST_API_URL: "http://polar-n1-alice:10001"
-      LND_TIMEOUT: 10000
+      STATISTICS_ENABLED: 1
     image: mempool/backend:v2.5.0
     restart: on-failure
     volumes:

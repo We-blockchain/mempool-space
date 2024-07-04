@@ -1,0 +1,1 @@
+bitcoin-cli -regtest --rpcuser=mempool --rpcpassword=mempool stop

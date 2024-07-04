@@ -21,3 +21,23 @@ docker-compose up -d
 open browser at http://localhost:8080
 
 ```
+
+## Fix
+
+### CORE_RPC_HOST
+```
+# ifconfig
+docker0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+        inet 172.17.0.1  netmask 255.255.0.0  broadcast 172.17.255.255
+```
+
+### network
+```
+docker network create polar-network-1_default
+```
+
+### run
+```
+./restart_bitcoind
+docker-compose up
+```

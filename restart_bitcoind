@@ -1,0 +1,16 @@
+bitcoin-cli -regtest --rpcuser=mempool --rpcpassword=mempool stop
+
+rm -rf ~/.bitcoin
+mkdir ~/.bitcoin
+cp bitcoin.conf ~/.bitcoin/bitcoin.conf
+
+bitcoind -regtest --rpcuser=mempool --rpcpassword=mempool -fallbackfee=0.00001 -daemon
+sleep 1
+
+bitcoin-cli -regtest --rpcuser=mempool --rpcpassword=mempool createwallet test
+ADDR=$(bitcoin-cli -regtest --rpcuser=mempool --rpcpassword=mempool getnewaddress)
+echo $ADDR
+bitcoin-cli -regtest --rpcuser=mempool --rpcpassword=mempool generatetoaddress 101 $ADDR
+
+echo bitcoin-cli -regtest --rpcuser=mempool --rpcpassword=mempool getbalance
+bitcoin-cli -regtest --rpcuser=mempool --rpcpassword=mempool getbalance

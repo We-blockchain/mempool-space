@@ -1,0 +1,1 @@
+bitcoind -regtest -fallbackfee=0.00001 -daemon

@@ -1,0 +1,1 @@
+docker rm -f polar-mempool_mempool-db_1 polar-mempool_mempool-api_1 polar-mempool_mempool-web_1
