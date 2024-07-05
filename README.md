@@ -39,5 +39,31 @@ docker network create polar-network-1_default
 ### run
 ```
 ./restart_bitcoind
+docker-compose up -f ./docker-compose-getumbrel:electrs.yml
+```
+
+## mempool + esplora
+更换为支持 UTXO 查询的后端：
+
+https://blockstream.info/ （`@mempool/mempool.js` 支持该hostname）
+
+https://github.com/Blockstream/esplora
+
+API: https://github.com/Blockstream/esplora/blob/master/API.md
+```
+rm -rf ./data_bitcoin_regtest # 如果你想清除旧区块链
+docker rm -f btc
+./esplora
+
+./btc getblockcount
+./rm_docker
 docker-compose up
 ```
+
+尝试访问:
+
+http://127.0.0.1:8080/api/address/bcrt1q99ucxl2nnjcaw8vaet2vlzsyjvmhd5jj805587
+
+http://127.0.0.1:8080/api/address/bcrt1q99ucxl2nnjcaw8vaet2vlzsyjvmhd5jj805587/utxo (404 Not Found)
+
+http://127.0.0.1:8888/regtest/api/address/bcrt1q99ucxl2nnjcaw8vaet2vlzsyjvmhd5jj805587/utxo (esplora API)

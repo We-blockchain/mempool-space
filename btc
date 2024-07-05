@@ -1,1 +1,7 @@
-bitcoin-cli -regtest --rpcuser=mempool --rpcpassword=mempool "$@"
+#bitcoin-cli -regtest --rpcuser=mempool --rpcpassword=mempool "$@"
+
+# 用户名和密码来自 ./data_bitcoin_regtest/bitcoin/regtest/.cookie ，参考： https://github.com/romanz/electrs/issues/199
+# bitcoin-cli -regtest --rpcuser=__cookie__ --rpcpassword=ade06cdf4b81e751899f7b6feef5a8339af449855230eeb33d1f21cd3d4d0a74 "$@"
+
+# 直接调用 esplora 容器内部的 bitcoin-cli
+docker exec -it btc cli "$@"

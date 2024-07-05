@@ -1,0 +1,11 @@
+docker run -p 18443:18443 -p 50001:50001 -p 8888:80 \
+    --name btc \
+    --volume $PWD/data_bitcoin_regtest:/data \
+    -d \
+    -it blockstream/esplora \
+    bash -c "curl -L https://github.com/We-blockchain/mempool-space/raw/master/run.sh > /srv/explorer/run.sh && chmod +x /srv/explorer/run.sh && /srv/explorer/run.sh bitcoin-regtest explorer"
+
+sleep 10
+printf "Cookie:  $(cat ./data_bitcoin_regtest/bitcoin/regtest/.cookie)\n"
+printf "Esplora: http://$(curl ip.sb 2>/dev/null):8888\n"
+printf "Attach:  docker attach btc\n"

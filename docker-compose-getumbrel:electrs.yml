@@ -1,5 +1,22 @@
+# 不支持UTXO查询
+
 version: "3.7"
 services:
+  electrs:
+    hostname: 0.0.0.0
+    image: getumbrel/electrs:v0.10.2
+    environment:
+      ELECTRS_ELECTRUM_RPC_ADDR: "0.0.0.0:50001"
+      ELECTRS_DAEMON_RPC_ADDR: "172.17.0.1:18443"
+      ELECTRS_DAEMON_P2P_ADDR: "172.17.0.1:18444"
+    entrypoint: "sh -c 'sleep 1 && electrs'"
+    ports:
+      - 50001:50001
+    volumes:
+      - ./data/:/data/.electrs/
+    networks:
+      - polar-network-1_default
+
   mempool-web:
     restart: on-failure
     depends_on:
@@ -16,26 +33,25 @@ services:
   mempool-api:
     depends_on:
       - mempool-db
+      - electrs
     environment:
-      MEMPOOL_BACKEND: "electrum" # https://github.com/mempool/mempool/blob/master/docker/README.md#configure-with-bitcoin-core--electrum-server
+      MEMPOOL_BACKEND: "electrum"
       MEMPOOL_NETWORK: "testnet"
-      ELECTRUM_HOST: "172.17.0.1" # 注意更换网关IP
+      ELECTRUM_HOST: "172.17.0.1"
       ELECTRUM_PORT: "50001"
       ELECTRUM_TLS_ENABLED: 0
-      CORE_RPC_HOST: "172.17.0.1" # 注意更换网关IP
+      CORE_RPC_HOST: "172.17.0.1"
       CORE_RPC_PORT: "18443"
-      # 用户名和密码来自 ./data_bitcoin_regtest/bitcoin/regtest/.cookie ，参考： https://github.com/romanz/electrs/issues/199
-      # 但是使用 esplora 作为后端依然不支持UTXO查询，只能使用 esplora 自身的API
-      CORE_RPC_USERNAME: "__cookie__"
-      CORE_RPC_PASSWORD: "6ddc7fc50b5190dd1169afa279936b916b90f405ef4190a01646e46e6d08ef2a" # 注意更换
+      CORE_RPC_USERNAME: "mempool"
+      CORE_RPC_PASSWORD: "mempool"
       DATABASE_ENABLED: 1
-      DATABASE_HOST: "mempool-db" # 注意更换，也可以设置成网关IP
+      DATABASE_HOST: "172.17.0.1"
       DATABASE_DATABASE: "mempool"
       DATABASE_USERNAME: "mempool"
       DATABASE_PASSWORD: "mempool"
       STATISTICS_ENABLED: 1
     image: mempool/backend:latest
-    restart: always
+    restart: on-failure
     volumes:
       - ${HOME}/.polar/networks/1/volumes/lnd/:/lnd
     networks:
@@ -49,10 +65,10 @@ services:
       MYSQL_ROOT_PASSWORD: "admin"
     image: mariadb:10.5.21
     ports:
-      - 3306:3306 # 也可以不导出端口，只需将 mempool-api 容器的 DATABASE_HOST 环境变量设置成网关IP
+      - 3306:3306
     networks:
       - polar-network-1_default
 
 networks:
   polar-network-1_default:
-    external: true # 通过 docker network create polar-network-1_default 创建网桥
+    external: true
